@@ -29,7 +29,9 @@ directamente desde la plataforma.
 Página de bienvenida que resume los servicios ofrecidos y las características 
 principales del sistema. 
 
-6.Tecnologías Utilizadas: 
+6. Formulario Usuarios(new): para crear usuarios y modificarlos
+
+7.Tecnologías Utilizadas: 
 
 Frontend: HTML, CSS, JavaScript.
 
@@ -47,6 +49,11 @@ autenticación segura. y validaciones de administrador con JavaScript.
 Cambios en la proxima version.
 
 4.Desarrollar funcionalidades adicionales. como la Integracion de una api al módulo cotizaciones para enviar correos Electronicos.
+
+5. validaciones de compos vacios con Javascripts.
+6. se agrego el Formulario Usuarios: para crear usuarios y modificarlos
+
+   Proximo paso: convertir la estructura de mi proyecto en una estructura de aplicacion React para la presentacion final
 
 CREDENCIALES DE PRUEBA.... 
 USUARIO: admin   PASSWORD: 1234 (solo puede ver el formulario crear usuarios(cree un usuario para probar la interface competa))
