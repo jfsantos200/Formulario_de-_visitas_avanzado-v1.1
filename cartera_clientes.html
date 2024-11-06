@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartera de Clientes - A4 Soluciones Corporativas</title>
+    <style>
+        /* Estilos comunes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #572;
+            padding: 10px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            display: inline-block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background-color: #555;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        form button {
+            padding: 10px;
+            background-color: #572;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #572;
+            color: white;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="a4.png" alt="A4 Soluciones Corporativas">
+            </div>
+            <div class="menu">
+                <a href="index.html">Inicio</a>
+                <a href="cotizaciones.html">Cotizaciones</a>
+                <a href="cartera_clientes.html" class="active">Cartera de Clientes</a>
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Cartera de Clientes</h1>
+    </header>
+
+    <section>
+        <h2>Registrar un Nuevo Cliente</h2>
+        <form id="clientForm">
+            
+            <label for="empresa">Empresa:</label>
+            <input type="text" id="empresa" name="empresa" placeholder="Nombre de la Empresa" required>
+
+            <label for="rnc">RNC:</label>
+            <input type="text" id="rnc" name="rnc" placeholder="RNC" required>
+
+            <label for="rubro">Rubro:</label>
+            <input type="text" id="rubro" name="rubro" placeholder="Rubro de la Empresa" required>
+			
+			<label for="Telefono">Telefono:</label>
+            <input type="text" id="Telefono" name="Telefono" placeholder="Telefono del Cliente" required>
+			
+			<label for="Direccion ">Direccion :</label>
+            <input type="text" id="Direccion" name="Direccion" placeholder="Direccion del Cliente" required>
+			
+			<label for="Email">Email:</label>
+            <input type="text" id="Email" name="Email" placeholder="Email del Cliente" required>
+
+            <button type="submit">Registrar Cliente</button>
+        </form>
+
+        <h2>Lista de Clientes</h2>
+        <table id="clientesTable">
+            <tr>
+                <th>ID</th>
+                <th>Empresa</th>
+                <th>RNC</th>
+                <th>Rubro</th>
+				<th>ID Telefono</th>
+				<th>ID Direccion</th>
+				<th>ID Email</th>
+                <th>Acciones</th>
+            </tr>
+        </table>
+    </section>
+
+    <script>
+        const clientForm = document.getElementById('clientForm');
+        const clientesTable = document.getElementById('clientesTable');
+    
+        // Cargar clientes desde el localStorage
+        let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    
+        // Función para renderizar los clientes en la tabla
+        function renderClientes() {
+            // Limpiar la tabla excepto la fila de encabezado
+            clientesTable.innerHTML = `
+                <tr>
+                    <th>ID</th>
+                    <th>Empresa</th>
+                    <th>RNC</th>
+                    <th>Rubro</th>
+                    <th>Telefono</th>
+                    <th>Direccion</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
+                </tr>
+            `;
+            clientes.forEach((cliente, index) => {
+                const row = clientesTable.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${cliente.empresa}</td>
+                    <td>${cliente.rnc}</td>
+                    <td>${cliente.rubro}</td>
+                    <td>${cliente.Telefono}</td>
+                    <td>${cliente.Direccion}</td>
+                    <td>${cliente.Email}</td>
+                    <td>
+                        <a href="#" data-index="${index}" class="eliminar">Eliminar</a> |
+                        <a href="#" data-index="${index}" class="editar">Editar</a>
+                    </td>
+                `;
+            });
+        }
+    
+        // Inicializar la tabla de clientes
+        renderClientes();
+    
+        // Manejar el envío del formulario
+        clientForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+    
+            // Capturar los valores del formulario
+            const empresa = document.getElementById('empresa').value.trim();
+            const rnc = document.getElementById('rnc').value.trim();
+            const rubro = document.getElementById('rubro').value.trim();
+            const Telefono = document.getElementById('Telefono').value.trim();
+            const Direccion = document.getElementById('Direccion').value.trim();
+            const Email = document.getElementById('Email').value.trim();
+    
+            // Crear el nuevo cliente
+            const nuevoCliente = { empresa, rnc, rubro, Telefono, Direccion, Email };
+    
+            // Agregar el nuevo cliente a la lista
+            clientes.push(nuevoCliente);
+    
+            // Guardar la lista actualizada en localStorage
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+    
+            // Volver a renderizar la tabla de clientes
+            renderClientes();
+    
+            // Mostrar mensaje de éxito y reiniciar el formulario
+            alert('Cliente registrado correctamente.');
+            clientForm.reset();
+        });
+    
+        // Manejar acciones de eliminar y editar
+        clientesTable.addEventListener('click', function(event) {
+            if (event.target.classList.contains('eliminar')) {
+                const index = event.target.getAttribute('data-index');
+                if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+                    // Eliminar el cliente de la lista
+                    clientes.splice(index, 1);
+    
+                    // Actualizar el localStorage y la tabla
+                    localStorage.setItem('clientes', JSON.stringify(clientes));
+                    renderClientes();
+                }
+            }
+    
+            if (event.target.classList.contains('editar')) {
+                const index = event.target.getAttribute('data-index');
+                const cliente = clientes[index];
+    
+                // Llenar el formulario con los datos del cliente a editar
+                document.getElementById('empresa').value = cliente.empresa;
+                document.getElementById('rnc').value = cliente.rnc;
+                document.getElementById('rubro').value = cliente.rubro;
+                document.getElementById('Telefono').value = cliente.Telefono;
+                document.getElementById('Direccion').value = cliente.Direccion;
+                document.getElementById('Email').value = cliente.Email;
+    
+                // Eliminar el cliente antiguo para reemplazarlo con el editado
+                clientes.splice(index, 1);
+                localStorage.setItem('clientes', JSON.stringify(clientes));
+            }
+        });
+    </script>
+    
+</body>
+</html>

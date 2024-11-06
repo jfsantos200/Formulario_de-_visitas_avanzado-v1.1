@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizaciones - A4 Soluciones Corporativas</title>
+    <style>
+        /* Estilos comunes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #572;
+            padding: 10px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            display: inline-block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background-color: #555;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form textarea, form select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        form button {
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #555;
+        }
+
+        /* Estilos para la tabla de cotizaciones */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú de navegación superior -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="a4.png" alt="Logo A4 Soluciones Corporativas">
+            </div>
+            <div class="menu">
+                <a href="login.html" id="authButton">Login</a>
+                <a href="formulario_visita.html">Registro de Visita</a>
+                <a href="cotizaciones.html" class="active">Cotizaciones</a>
+                <a href="contacto.html">Contacto</a>
+				<a href="cartera_clientes.html" class="form-link">Clientes</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Encabezado -->
+    <header>
+        <h1>Gestión de Cotizaciones</h1>
+    </header>
+
+    <!-- Sección de envío de cotizaciones -->
+    <section>
+        <h2>Enviar Nueva Cotización</h2>
+        <form id="cotizacionForm">
+            <label for="cliente">Cliente:</label>
+            <select id="cliente" name="cliente" required>
+                <option value="">Selecciona un Cliente</option>
+            </select>
+        
+            <label for="producto">Producto/Servicio:</label>
+            <input type="text" id="producto" name="producto" placeholder="Descripción del Producto o Servicio" required>
+        
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidad" name="cantidad" min="1" required>
+        
+            <label for="precio">Precio Unitario:</label>
+            <input type="number" id="precio" name="precio" step="0.01" placeholder="Precio en USD" required>
+        
+            <label for="fecha_entrega">Fecha de Entrega:</label>
+            <input type="date" id="fecha_entrega" name="fecha_entrega" required>
+        
+            <button type="submit">Enviar Cotización</button>
+        </form>
+        
+    </section>
+
+    <!-- Sección de carga de cotizaciones -->
+    <section>
+        <h2>Lista de Cotizaciones</h2>
+        <table id="cotizacionesTable">
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Producto/Servicio</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Fecha de Entrega</th>
+                <th>Acciones</th>
+            </tr>
+            <!-- Filas de cotizaciones serán añadidas aquí -->
+        </table>
+    </section>
+
+    <footer>
+        <a href="" target="_blank" title="Powered by Jhonattan Santos"><strong>&copy; 2024 A4 Soluciones Corp.</strong></a>
+    </footer>
+
+    <script>
+        // Cargar clientes desde el localStorage (Cartera de Clientes)
+        let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    
+        // Función para cargar clientes en el listbox
+        function cargarClientesEnListbox() {
+            const clienteSelect = document.getElementById('cliente');
+            clientes.forEach(cliente => {
+                const option = document.createElement('option');
+                option.value = cliente.empresa;
+                option.textContent = cliente.empresa;
+                clienteSelect.appendChild(option);
+            });
+        }
+    
+        // Llamar a la función para cargar los clientes al iniciar
+        cargarClientesEnListbox();
+    
+        // Función para verificar si el usuario está logueado
+        function checkLogin() {
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+            if (!loggedIn) {
+                alert('Debes iniciar sesión para acceder a esta página.');
+                window.location.href = 'login.html';
+            }
+        }
+    
+        // Verificar el login al cargar la página
+        checkLogin();
+    
+        // Manejar el envío del formulario de cotización
+        const cotizacionForm = document.getElementById('cotizacionForm');
+        const cotizacionesTable = document.getElementById('cotizacionesTable');
+    
+        // Para almacenar las cotizaciones localmente
+        let cotizaciones = JSON.parse(localStorage.getItem('cotizaciones')) || [];
+    
+        // Función para renderizar las cotizaciones en la tabla
+        function renderCotizaciones() {
+            cotizacionesTable.innerHTML = `
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Producto/Servicio</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Fecha de Entrega</th>
+                    <th>Acciones</th>
+                </tr>
+            `;
+            cotizaciones.forEach((cotizacion, index) => {
+                const row = cotizacionesTable.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${cotizacion.cliente}</td>
+                    <td>${cotizacion.producto}</td>
+                    <td>${cotizacion.cantidad}</td>
+                    <td>$${parseFloat(cotizacion.precio).toFixed(2)}</td>
+                    <td>${cotizacion.fecha_entrega}</td>
+                    <td>
+                        <a href="#" data-index="${index}" class="editar">Editar</a> | 
+                        <a href="#" data-index="${index}" class="eliminar">Eliminar</a>
+                    </td>
+                `;
+            });
+        }
+    
+        // Inicializar la tabla
+        renderCotizaciones();
+    
+        // Manejar el envío del formulario
+        cotizacionForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+    
+            const cliente = document.getElementById('cliente').value.trim();
+            const producto = document.getElementById('producto').value.trim();
+            const cantidad = document.getElementById('cantidad').value;
+            const precio = document.getElementById('precio').value;
+            const fecha_entrega = document.getElementById('fecha_entrega').value;
+    
+            const nuevaCotizacion = {
+                cliente,
+                producto,
+                cantidad,
+                precio,
+                fecha_entrega
+            };
+    
+            cotizaciones.push(nuevaCotizacion);
+            localStorage.setItem('cotizaciones', JSON.stringify(cotizaciones));
+    
+            renderCotizaciones();
+    
+            alert('Cotización enviada correctamente.');
+            cotizacionForm.reset();
+        });
+    
+        // Manejar acciones de editar y eliminar
+        cotizacionesTable.addEventListener('click', function(event) {
+            event.preventDefault();
+            if (event.target.classList.contains('eliminar')) {
+                const index = event.target.getAttribute('data-index');
+                if (confirm('¿Estás seguro de que deseas eliminar esta cotización?')) {
+                    cotizaciones.splice(index, 1);
+                    localStorage.setItem('cotizaciones', JSON.stringify(cotizaciones));
+                    renderCotizaciones();
+                    alert('Cotización eliminada.');
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

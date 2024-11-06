@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Visita - A4 Soluciones Corporativas</title>
+    <style>
+        /* Estilos comunes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #572;
+            padding: 10px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            display: inline-block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background-color: #555;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        form button {
+            padding: 10px;
+            background-color: #572;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #572;
+            color: white;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="a4.png" alt="A4 Soluciones Corporativas">
+            </div>
+            <div class="menu">
+                <a href="index.html">Inicio</a>
+                <a href="contacto.html">Contacto</a>
+                <a href="formulario.html" class="active">Formulario</a>
+				<a href="cartera_clientes.html" class="form-link">Clientes</a>
+				
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Registro de Visita</h1>
+    </header>
+
+    <section>
+        <h2>Complete el formulario para registrar su visita</h2>
+        <form id="visitForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="campo" required>
+
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" class="campo" required>
+
+            <label for="fecha">Fecha de Visita:</label>
+            <input type="date" id="fecha" name="fecha" class="campo" required>
+
+            <label for="motivo">Motivo de la Visita:</label>
+            <textarea id="motivo" name="motivo" class="campo" required></textarea>
+
+            <button type="submit">Registrar Visita</button>
+        </form>
+
+        <h2>Lista de Visitas</h2>
+        <table id="visitasTable">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Fecha de Visita</th>
+                <th>Motivo</th>
+                <th>Acciones</th>
+            </tr>
+        </table>
+    </section>
+
+    <script>
+        const visitForm = document.getElementById('visitForm');
+        const visitasTable = document.getElementById('visitasTable');
+
+        // Cargar visitas desde el localStorage
+        let visitas = JSON.parse(localStorage.getItem('visitas')) || [];
+
+        // Función para renderizar las visitas en la tabla
+        function renderVisitas() {
+            // Limpiar la tabla excepto la fila de encabezado
+            visitasTable.innerHTML = `
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Fecha de Visita</th>
+                    <th>Motivo</th>
+                    <th>Acciones</th>
+                </tr>
+            `;
+            visitas.forEach((visita, index) => {
+                const row = visitasTable.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${visita.nombre}</td>
+                    <td>${visita.apellido}</td>
+                    <td>${visita.fecha}</td>
+                    <td>${visita.motivo}</td>
+                    <td>
+                        <a href="#" data-index="${index}" class="eliminar">Eliminar</a>
+                    </td>
+                `;
+            });
+        }
+
+        // Inicializar la tabla de visitas
+        renderVisitas();
+
+        // Manejar el envío del formulario
+        visitForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const fecha = document.getElementById('fecha').value;
+            const motivo = document.getElementById('motivo').value.trim();
+
+            const nuevaVisita = { nombre, apellido, fecha, motivo };
+
+            visitas.push(nuevaVisita);
+            localStorage.setItem('visitas', JSON.stringify(visitas));
+
+            renderVisitas();
+
+            alert('Visita registrada correctamente.');
+            visitForm.reset();
+        });
+
+        // Manejar la eliminación de una visita
+        visitasTable.addEventListener('click', function(event) {
+            if (event.target.classList.contains('eliminar')) {
+                const index = event.target.getAttribute('data-index');
+                if (confirm('¿Estás seguro de que deseas eliminar esta visita?')) {
+                    visitas.splice(index, 1);
+                    localStorage.setItem('visitas', JSON.stringify(visitas));
+                    renderVisitas();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

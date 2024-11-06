@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - A4 Soluciones Corporativas</title>
+    <style>
+        /* Estilos comunes */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #572;
+            padding: 10px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            display: inline-block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background-color: #a0aebb;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form textarea, form select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        form button {
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú de navegación superior -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="a4.png" alt="Logo A4 Soluciones Corporativas">
+            </div>
+            <div class="menu">
+                <a href="login.html" id="authButton">Login</a>
+                <a href="formulario_visita.html">Registro de Visita</a>
+                <a href="cotizaciones.html">Cotizaciones</a>
+                <a href="contacto.html" class="active">Contacto</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Encabezado -->
+    <header>
+        <h1>Contacto</h1>
+    </header>
+
+    <!-- Sección de formulario de contacto -->
+    <section>
+        <h2>Envíanos un Mensaje</h2>
+        <form id="contactForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre" required>
+
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" placeholder="tuemail@ejemplo.com" required>
+
+            <label for="asunto">Asunto:</label>
+            <input type="text" id="asunto" name="asunto" placeholder="Asunto del Mensaje" required>
+
+            <label for="mensaje">Mensaje:</label>
+            <textarea id="mensaje" name="mensaje" rows="5" placeholder="Escribe tu mensaje aquí..." required></textarea>
+
+            <button type="submit">Enviar Mensaje</button>
+        </form>
+    </section>
+
+    <footer>
+        <a href="" target="_blank" title="Powered by Jhonattan Santos"><strong>&copy; 2024 A4 Soluciones Corp.</strong></a>
+    </footer>
+
+    <script>
+        // Función para actualizar el botón de autenticación
+        function updateAuthButton() {
+            const authButton = document.getElementById('authButton');
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+            const username = localStorage.getItem('username');
+
+            if (loggedIn) {
+                authButton.textContent = 'Cerrar Sesión';
+                // Reubicar el botón al inicio de la menu
+                const menu = document.querySelector('.menu');
+                menu.insertBefore(authButton, menu.firstChild);
+            } else {
+                authButton.textContent = 'Login';
+                // Reubicar el botón al final de la menu
+                const menu = document.querySelector('.menu');
+                menu.appendChild(authButton);
+            }
+        }
+
+        // Función para manejar el logout
+        function handleLogout() {
+            localStorage.setItem('loggedIn', 'false');
+            localStorage.removeItem('username');
+            alert('Has cerrado sesión correctamente.');
+            window.location.href = 'index.html';
+        }
+
+        // Actualizar el botón al cargar la página
+        updateAuthButton();
+
+        // Añadir evento al botón de autenticación
+        document.getElementById('authButton').addEventListener('click', function() {
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+
+            if (loggedIn) {
+                handleLogout();
+            } else {
+                // Redirigir al login.html
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Función para verificar si el usuario está logueado
+        function checkLogin() {
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+            if (!loggedIn) {
+                alert('Debes iniciar sesión para acceder a esta página.');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Verificar el login al cargar la página
+        checkLogin();
+
+        // Manejar el envío del formulario de contacto
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Aquí puedes manejar el envío del formulario, por ejemplo, enviar datos a un servidor
+            alert('Mensaje enviado correctamente.');
+            contactForm.reset();
+        });
+
+        // Opcional: Actualizar enlaces de la menu
+        function updateMenuLinks() {
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+            const formLinks = document.querySelectorAll('.menu a:not(#authButton)');
+
+            formLinks.forEach(link => {
+                if (loggedIn) {
+                    link.style.pointerEvents = 'auto';
+                    link.style.opacity = '1';
+                } else {
+                    link.style.pointerEvents = 'none';
+                    link.style.opacity = '0.5';
+                }
+            });
+        }
+
+        // Actualizar los enlaces al cargar
+        updateMenuLinks();
+    </script>
+</body>
+</html>

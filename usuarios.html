@@ -1,0 +1,215 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - A4 Soluciones Corporativas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .edit-delete-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+        button {
+            padding: 8px 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .hidden {
+            display: none;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #createUserFormContainer {
+            margin-top: 20px;
+        }
+        #createUserForm input {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gestión de Usuarios</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre Completo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="userList">
+                <!-- cargar los usuarios dinámicamente -->
+            </tbody>
+        </table>
+        <button id="createUserBtn">Crear Usuario</button>
+        <div class="logout-btn">
+            <button id="logoutBtn">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- Formulario para  Crear Usuarios (Oculto por defecto) -->
+    <div class="login-container hidden" id="createUserFormContainer">
+        <h2>Crear Usuario</h2>
+        <form id="createUserForm">
+            <input type="text" id="newFullName" placeholder="Nombre Completo" required>
+            <input type="text" id="newUsername" placeholder="Nuevo Usuario" required>
+            <input type="password" id="newPassword" placeholder="Nueva Contraseña" required>
+            <button type="submit">Crear</button>
+        </form>
+        <div class="create-user">
+            <button id="cancelCreateUserBtn">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Verificar el usuario administrador
+        const currentUser = localStorage.getItem('username');
+        if (currentUser !== 'admin') {
+            alert('Acceso denegado. Solo el administrador puede acceder a esta página.');
+            window.location.href = 'login.html';
+        }
+
+        // Cargar la lista de usuarios
+        const userList = document.getElementById('userList');
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+
+        function renderUsers() {
+            userList.innerHTML = ''; // Limpiar lista de usuarios
+
+            for (const username in users) {
+                const user = users[username];
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${username}</td>
+                    <td>${user.fullName}</td>
+                    <td class="edit-delete-buttons">
+                        <button onclick="editFullName('${username}')">Editar Nombre</button>
+                        <button onclick="editUsername('${username}')">Editar Usuario</button>
+                        <button onclick="deleteUser('${username}')">Eliminar</button>
+                    </td>
+                `;
+                userList.appendChild(tr);
+            }
+        }
+
+        // Mostrar el formulario de crear usuario
+        document.getElementById('createUserBtn').addEventListener('click', function() {
+            document.getElementById('createUserFormContainer').classList.remove('hidden');
+        });
+
+        // Cancelar la creación de usuario
+        document.getElementById('cancelCreateUserBtn').addEventListener('click', function() {
+            document.getElementById('createUserFormContainer').classList.add('hidden');
+        });
+
+        // Manejar la creación de un nuevo usuario
+        document.getElementById('createUserForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const newFullName = document.getElementById('newFullName').value;
+            const newUsername = document.getElementById('newUsername').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (users[newUsername]) {
+                alert('El nombre de usuario ya existe. Elige otro.');
+                return;
+            }
+
+            users[newUsername] = {
+                fullName: newFullName,
+                password: newPassword
+            };
+
+            localStorage.setItem('users', JSON.stringify(users));
+            renderUsers();
+            document.getElementById('createUserFormContainer').classList.add('hidden'); // Ocultar el formulario
+        });
+
+        // Editar nombre completo
+        function editFullName(username) {
+            const newFullname = prompt('Ingrese el nuevo nombre completo para el usuario:', users[username].fullName);
+            if (newFullname) {
+                users[username].fullName = newFullname; // Actualiza el nombre completo
+                localStorage.setItem('users', JSON.stringify(users)); // Actualiza localStorage
+                renderUsers(); // Volver a renderizar la lista
+            }
+        }
+
+        // Editar nombre de usuario
+        function editUsername(username) {
+            const newUsername = prompt('Ingrese el nuevo nombre de usuario:', username);
+            if (newUsername && !users[newUsername]) { // Verifica que el nuevo usuario no exista
+                users[newUsername] = users[username]; // Copia los datos del usuario antiguo
+                delete users[username]; // Elimina el usuario antiguo
+                localStorage.setItem('users', JSON.stringify(users)); // Actualiza localStorage
+                renderUsers(); // Volver a renderizar la lista
+            } else if (users[newUsername]) {
+                alert('El nombre de usuario ya existe. Por favor, elige otro.');
+            } else {
+                alert('Nombre de usuario inválido.');
+            }
+        }
+
+        // Eliminar usuario
+        function deleteUser(username) {
+            if (confirm(`¿Estás seguro de que deseas eliminar el usuario ${username}?`)) {
+                delete users[username];
+                localStorage.setItem('users', JSON.stringify(users));
+                renderUsers(); // Volver a renderizar la lista
+            }
+        }
+
+        // Cerrar sesión
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+
+        // Renderizar usuarios al cargar la página
+        renderUsers();
+    </script>
+</body>
+</html>
